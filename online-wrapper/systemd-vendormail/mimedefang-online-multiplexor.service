@@ -1,0 +1,18 @@
+[Unit]
+Description=MIMEDefang multiplexor
+After=syslog.target network.target
+BindsTo=mimedefang-online.service
+
+[Service]
+Type=forking
+PIDFile=/run/mimedefang-online-multiplexor.pid
+Environment=HOME=/var/spool/MIMEDefang-online
+Environment=LANG=C
+EnvironmentFile=-/etc/sysconfig/mimedefang-online
+ExecStartPre=/usr/libexec/mimedefang-online-wrapper configtest
+ExecStart=/usr/libexec/mimedefang-online-wrapper multiplexor
+ExecReload=/usr/libexec/mimedefang-online-wrapper reload
+SuccessExitStatus=1
+
+[Install]
+WantedBy=multi-user.target

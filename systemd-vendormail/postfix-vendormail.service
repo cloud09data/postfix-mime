@@ -1,0 +1,22 @@
+[Unit]
+Description=Postfix Mail Transport Agent
+After=syslog.target network.target
+Conflicts=sendmail.service exim.service
+
+[Service]
+Type=forking
+PIDFile=/var/spool/postfix-vendormail/pid/master.pid
+EnvironmentFile=-/etc/sysconfig/network
+PrivateTmp=true
+CapabilityBoundingSet=~ CAP_NET_ADMIN CAP_SYS_ADMIN CAP_SYS_BOOT CAP_SYS_MODULE
+ProtectSystem=true
+PrivateDevices=true
+ExecStartPre=-/usr/sbin/restorecon -R /var/spool/postfix-vendormail/pid/master.pid
+ExecStartPre=-/usr/libexec/postfix/aliasesdb
+ExecStartPre=-/usr/libexec/postfix/chroot-update
+ExecStart=/usr/sbin/postfix -v -c /etc/postfix-vendormail start
+ExecReload=/usr/sbin/postfix -v -c /etc/postfix-vendormail reload
+ExecStop=/usr/sbin/postfix -v -c /etc/postfix-vendormail stop
+
+[Install]
+WantedBy=multi-user.target
