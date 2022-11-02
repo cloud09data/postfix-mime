@@ -1,4 +1,4 @@
-####### FACTSET postfix-online instance #####
+####### postfix-online instance #####
 compatibility_level = 2
 queue_directory = /var/spool/postfix-online
 command_directory = /usr/sbin

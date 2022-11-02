@@ -1,9 +1,9 @@
-####### FACTSET postfix-online instance #####
+####### postfix-vendormail instance #####
 compatibility_level = 2
-queue_directory = /var/spool/postfix-online
+queue_directory = /var/spool/postfix-vendormail
 command_directory = /usr/sbin
 daemon_directory = /usr/libexec/postfix
-data_directory = /var/lib/postfix-online
+data_directory = /var/lib/postfix-vendormail
 mail_owner = postfix
 inet_interfaces = localhost
 inet_protocols = all
@@ -25,8 +25,8 @@ smtp_tls_security_level = may
 shlib_directory = /usr/lib64/postfix
 meta_directory = /etc/postfix
 authorized_submit_users = 
-multi_instance_name = postfix-online
+multi_instance_name = postfix-vendormail
 multi_instance_enable = yes
 smtpd_milters = inet:localhost:10996
 milter_default_action = accept
-header_checks =regexp:/etc/postfix-online/header_checks
+header_checks =regexp:/etc/postfix-vendormail/header_checks

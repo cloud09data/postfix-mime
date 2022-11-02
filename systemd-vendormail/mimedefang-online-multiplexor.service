@@ -1,0 +1,18 @@
+[Unit]
+Description=MIMEDefang multiplexor
+After=syslog.target network.target
+BindsTo=mimedefang-vendormail.service
+
+[Service]
+Type=forking
+PIDFile=/run/mimedefang-vendormail-multiplexor.pid
+Environment=HOME=/var/spool/MIMEDefang-vendormail
+Environment=LANG=C
+EnvironmentFile=-/etc/sysconfig/mimedefang-vendormail
+ExecStartPre=/usr/libexec/mimedefang-vendormail-wrapper configtest
+ExecStart=/usr/libexec/mimedefang-vendormail-wrapper multiplexor
+ExecReload=/usr/libexec/mimedefang-vendormail-wrapper reload
+SuccessExitStatus=1
+
+[Install]
+WantedBy=multi-user.target
