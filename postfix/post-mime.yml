@@ -1,0 +1,11 @@
+---
+# Playbook to install postfix and mimedefang
+- name: Postfix & Mimedefang
+  hosts: all
+  become: yes
+  become_method: sudo
+  gather_facts: true
+  roles:
+    - postfix_install
+    #- {role: 'postfix_install', tags: 'postfix'}
+    #- {role: 'mimedefang_config', tags: 'mimedefang'}

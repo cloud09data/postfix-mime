@@ -1,0 +1,84 @@
+---
+- name: install postfix
+  yum:
+    name: 
+      - postfix
+      - mimedefang
+    state: latest
+  tags:
+    - both
+
+- name: Make Postfix Online Directory
+  file:
+    path: /etc/postfix-online
+    state: directory
+  register: online_dir_created
+  tags:
+    - online
+
+- name: Make MIMEDefang-online Directory
+  file:
+    path: /var/spool/MIMEDefang-online
+    state: directory
+    owner: defang
+    group: defang
+  tags:
+    - online
+
+- name: Make MIMEDefang-vendormail Directory
+  file:
+    path: /var/spool/MIMEDefang-vendormail
+    state: directory
+    owner: defang
+    group: defang
+  tags:
+    - vendormail
+
+- name: Make Postfix Vendor Directory
+  file:
+    path: /etc/postfix-vendormail
+    state: directory
+  register: vendor_dir_created
+  tags:
+    - vendormail
+- name: Download Config Files
+  shell: git clone https://github.com/cloud09data/postfix-mime.git /tmp/post-mime
+  tags:
+    - both
+
+- name: Copy Postfix Online Config Files
+  shell: |
+     cp -R /etc/postfix/master.cf /etc/postfix-online
+     cp -R /etc/postfix/header_checks /etc/postfix-online
+     cp -R /tmp/post-mime/online-main.cf /etc/postfix-online/main.cf
+     cp -R /tmp/post-mime/postfix-online.service /etc/systemd/system/
+     cp -R /tmp/post-mime/mimedefang-online-wrapper /usr/libexec/
+     cp -R /tmp/post-mime/mimedefang-online.service /etc/systemd/system/
+     cp -R /tmp/post-mime/mimedefang-online-multiplexor.service /etc/systemd/system/
+     chmod 755 /etc/systemd/system/postfix-online.service /etc/systemd/system/mimedefang-online*
+     #mkdir /var/spool/postfix-online
+     systemctl daemon-reload
+     systemctl enable --now postfix-online mimedefang-online
+  tags:
+    - online
+
+- name: Copy Postfix vendormail Config Files
+  shell: |
+     cp /etc/postfix/master.cf /etc/postfix-vendormail
+     cp /etc/postfix/header_checks /etc/postfix-vendormail
+     cp /tmp/post-mime/vendormail-main.cf /etc/postfix-vendormail/main.cf
+     cp /tmp/post-mime/postfix-vendormail.service /etc/systemd/system/
+     cp -R /tmp/post-mime/mimedefang-vendormail-wrapper /usr/libexec/
+     cp -R /tmp/post-mime/mimedefang-vendormail.service /etc/systemd/system/
+     cp -R /tmp/post-mime/mimedefang-vendormail-multiplexor.service /etc/systemd/system/
+     chmod 755 /etc/systemd/system/postfix-vendormail.service /etc/systemd/system/mimedefang-vendormail*
+     #mkdir /var/spool/postfix-vendormail
+     systemctl daemon-reload
+     systemctl enable --now postfix-vendormail mimedefang-vendormail
+  tags:
+    - vendormail
+
+- name: Remove Cloned Files
+  shell: rm -rf /tmp/post-mime
+  tags:
+    - both
